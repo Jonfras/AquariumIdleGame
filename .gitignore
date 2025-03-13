@@ -1,0 +1,9 @@
+# Ignore everything by default
+*
+
+# Don't ignore .gitignore itself
+!.gitignore
+
+# Don't ignore the aquarium_idle_game directory and its contents
+!aquarium_idle_game/
+!aquarium_idle_game/**
