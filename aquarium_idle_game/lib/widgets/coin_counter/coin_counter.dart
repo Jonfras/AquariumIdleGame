@@ -2,7 +2,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
-import 'package:aquarium_idle_game/state_management/coin_state.dart';
 
 class CoinCounter extends StatelessWidget {
   const CoinCounter({Key? key}) : super(key: key);

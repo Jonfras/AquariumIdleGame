@@ -1,58 +1,66 @@
-﻿import 'package:flutter/material.dart';
+﻿import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
-import 'package:aquarium_idle_game/state_management/coin_state.dart';
-import 'package:aquarium_idle_game/state_management/fish_state.dart';
-import 'package:aquarium_idle_game/widgets/coin_counter/coin_counter.dart';
-import 'package:aquarium_idle_game/widgets/animated_fish.dart';
 
+import '../../widgets/animated_decoration.dart';
+import '../../widgets/coin_counter/coin_counter.dart';
 import 'aquarium_screen_cubit.dart';
-import 'aquarium_screen_state.dart';
 
 class AquariumScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cubit = context.watch<AquariumScreenCubit>();
-    
-    return BlocProvider(
-        create: (context) => AquariumScreenCubit(AquariumScreenState()),
-        child:
-        Builder(builder: (context) {
-          return Scaffold(
-            appBar: AppBar(title: const Text('Aquarium Idle')),
-            body: GestureDetector(
-              onTap: () => cubit.incrementCoins(),
-              child: Container(
-                color: Colors.lightBlue,
-                child: Stack(
-                  children: [
-                    // Coin-Counter
-                    const Align(
-                      alignment: Alignment.topRight,
-                      child: Padding(padding: EdgeInsets.all(16.0), child: CoinCounter()),
-                    ),
-                    ...cubit.state.fishList,
-                    // Zentraler Text
-                    Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
-                          Text(
-                            'Klicke auf das Aquarium, um Coins zu sammeln!',
-                            style: TextStyle(fontSize: 24, color: Colors.white),
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('Aquarium Idle')),
+      body: GestureDetector(
+        onTap: () => cubit.incrementCoins(),
+        child: Container(
+          color: Colors.lightBlue,
+          child: Stack(
+            children: [
+              // Coin-Counter
+              const Align(
+                alignment: Alignment.topRight,
+                child: Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: CoinCounter(),
                 ),
               ),
-            ),
-          );
-        })
 
+              // Fish List - Create a list of widgets from the state
+              if (cubit.state.fishList.isNotEmpty)
+                for (var fish in cubit.state.fishList) fish,
+              // Inside Stack in AquariumScreen
+              // Add after fish list
+              // Decorations list - similar to fish list
+              if (cubit.state.decorationList.isNotEmpty)
+                for (var decoration in cubit.state.decorationList) decoration,
+
+              // We'll use a Builder to access the Scaffold context for showing the SnackBar
+              Builder(
+                builder: (context) {
+                  // Use post-frame callback to show snackbar after build completes
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    if (!cubit.state.hasShownWelcomeMessage) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            'Klicke auf das Aquarium, um Coins zu sammeln!',
+                          ),
+                          duration: Duration(seconds: 5),
+                        ),
+                      );
+                      cubit.markWelcomeMessageAsShown();
+                    }
+                  });
+                  return const SizedBox.shrink(); // No permanent UI element needed
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

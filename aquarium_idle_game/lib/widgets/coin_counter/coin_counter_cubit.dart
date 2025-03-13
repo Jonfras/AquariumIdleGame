@@ -18,6 +18,7 @@ class CoinCounterCubit extends Cubit<int> {
   
   @override
   Future<void> close() {
+    coinListener.cancel();
     return super.close();
   }
 }

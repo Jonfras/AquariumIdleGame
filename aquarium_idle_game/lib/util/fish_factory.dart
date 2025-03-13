@@ -10,7 +10,7 @@ class FishFactory {
     fishMap = Map.from({
       'Goldfish': Fish(
         assetPath: 'assets/animations/fish.json',
-        color: Colors.orange,
+        color: Colors.yellow,
         type: 'Goldfish',
         clickBonus: 1,
         price: 10,

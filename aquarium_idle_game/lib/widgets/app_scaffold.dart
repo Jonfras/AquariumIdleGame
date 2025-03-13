@@ -1,10 +1,6 @@
-﻿// lib/widgets/app_scaffold.dart
-import 'package:aquarium_idle_game/state_management/fish_state.dart';
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../views/shop/shop_screen_cubit.dart';
 
 class AppScaffold extends StatelessWidget {
   final Widget child;
