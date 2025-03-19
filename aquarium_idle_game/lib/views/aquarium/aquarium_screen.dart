@@ -1,8 +1,10 @@
 ﻿import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lottie/lottie.dart';
 
 import '../../widgets/animated_decoration.dart';
+import '../../widgets/background_widget.dart';
 import '../../widgets/coin_counter/coin_counter.dart';
 import 'aquarium_screen_cubit.dart';
 
@@ -19,6 +21,10 @@ class AquariumScreen extends StatelessWidget {
           color: Colors.lightBlue,
           child: Stack(
             children: [
+              BackgroundWidget(
+                animationPath: 'assets/animations/background.json',
+                speed: 1,
+              ),
               // Coin-Counter
               const Align(
                 alignment: Alignment.topRight,
@@ -27,6 +33,9 @@ class AquariumScreen extends StatelessWidget {
                   child: CoinCounter(),
                 ),
               ),
+              
+              if (cubit.state.decorationList.isNotEmpty)
+                for (var decoration in cubit.state.decorationList) decoration,
 
               // Fish List - Create a list of widgets from the state
               if (cubit.state.fishList.isNotEmpty)
@@ -34,8 +43,7 @@ class AquariumScreen extends StatelessWidget {
               // Inside Stack in AquariumScreen
               // Add after fish list
               // Decorations list - similar to fish list
-              if (cubit.state.decorationList.isNotEmpty)
-                for (var decoration in cubit.state.decorationList) decoration,
+              
 
               // We'll use a Builder to access the Scaffold context for showing the SnackBar
               Builder(

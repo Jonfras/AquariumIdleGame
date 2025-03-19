@@ -45,7 +45,7 @@ class _AnimatedFishState extends State<AnimatedFish>
 
       // Set initial position - start at the left edge
       _currentLeft = _random.nextDouble() * (screenWidth / 2);
-      _currentTop = 100 + _random.nextDouble() * (screenHeight - 200);
+      _currentTop = 100 + _random.nextDouble() * (screenHeight - fishSize - 200);
       _swimmingRight = true;
 
       // Initialize controllers
