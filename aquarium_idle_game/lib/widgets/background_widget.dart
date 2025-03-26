@@ -4,12 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
 class BackgroundWidget extends StatefulWidget {
-  final String animationPath;
+  final String animationPath = 'assets/animations/background/background.json';
   final double speed;
 
   const BackgroundWidget({
     Key? key,
-    required this.animationPath,
     this.speed = 1.0,
   }) : super(key: key);
 

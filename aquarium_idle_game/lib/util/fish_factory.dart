@@ -5,11 +5,12 @@ import '../model/fish.dart';
 class FishFactory {
   
   late final Map<String, Fish> fishMap;
+  static const fishPath = 'assets/animations/fish/fish.json';
 
   FishFactory() {
     fishMap = Map.from({
       'Goldfish': Fish(
-        assetPath: 'assets/animations/fish.json',
+        assetPath: fishPath,
         color: Colors.yellow,
         type: 'Goldfish',
         clickBonus: 1,
@@ -17,7 +18,7 @@ class FishFactory {
         size: 1.0,
       ),
       'Clownfish': Fish(
-        assetPath: 'assets/animations/fish.json',
+        assetPath: fishPath,
         color: Colors.orange,
         type: 'Clownfish',
         clickBonus: 2,
@@ -25,7 +26,7 @@ class FishFactory {
         size: 1.0,
       ),
       'Blue Tang': Fish(
-        assetPath: 'assets/animations/fish.json',
+        assetPath: fishPath,
         color: Colors.blue,
         type: 'Blue Tang',
         clickBonus: 3,
@@ -33,7 +34,7 @@ class FishFactory {
         size: 1.0,
       ),
       'Angelfish': Fish(
-        assetPath: 'assets/animations/fish.json',
+        assetPath: fishPath,
         color: Colors.yellow,
         type: 'Angelfish',
         clickBonus: 4,
@@ -42,7 +43,7 @@ class FishFactory {
 
       ),
       'Pufferfish': Fish(
-        assetPath: 'assets/animations/fish.json',
+        assetPath: fishPath,
         color: Colors.green,
         type: 'Pufferfish',
         clickBonus: 5,

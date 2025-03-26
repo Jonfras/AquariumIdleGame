@@ -8,8 +8,15 @@ import '../model/fish.dart';
 
 class AnimatedFish extends StatefulWidget {
   final Fish fish;
+  final bool isPreview;
+  final Widget Function(BuildContext, Object, StackTrace?)? errorBuilder;
 
-  const AnimatedFish({Key? key, required this.fish}) : super(key: key);
+  const AnimatedFish({
+    Key? key,
+    required this.fish,
+    this.isPreview = false,
+    this.errorBuilder,
+  }) : super(key: key);
 
   @override
   _AnimatedFishState createState() => _AnimatedFishState();
@@ -30,11 +37,13 @@ class _AnimatedFishState extends State<AnimatedFish>
   @override
   void initState() {
     super.initState();
-    SchedulerBinding.instance.addPostFrameCallback((_) {
-      if (!_isInitialized && mounted) {
-        _initializeAnimations();
-      }
-    });
+    if (!widget.isPreview) {
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        if (!_isInitialized && mounted) {
+          _initializeAnimations();
+        }
+      });
+    }
   }
 
   void _initializeAnimations() {
@@ -134,6 +143,28 @@ class _AnimatedFishState extends State<AnimatedFish>
 
   @override
   Widget build(BuildContext context) {
+    if (widget.isPreview) {
+      // Preview mode - static fish centered in container
+      return SizedBox(
+        width: widget.fish.size * 80,
+        height: widget.fish.size * 80,
+        child: Lottie.asset(
+          widget.fish.assetPath,
+          fit: BoxFit.contain,
+          frameRate: const FrameRate(24),
+          delegates: LottieDelegates(
+            values: [
+              ValueDelegate.color(['**'], value: widget.fish.color),
+            ],
+          ),
+          errorBuilder: widget.errorBuilder ?? (context, error, stackTrace) {
+            return Icon(Icons.pets, color: widget.fish.color, size: 50);
+          },
+        ),
+      );
+    }
+
+    // Normal mode - animated swimming fish
     if (!_isInitialized) {
       return const SizedBox.shrink();
     }

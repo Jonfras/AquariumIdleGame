@@ -15,8 +15,17 @@ dependencies:
   bloc: ^9.0.0
   flutter_bloc: ^9.1.0
   rxdart: ^0.28.0
+  openapi_generator_annotations: ^4.13.1
+  intl: ^0.18.1  
+  
+dev_dependencies:
+  openapi_generator: ^4.13.1
+  build_runner: ^2.3.2
 
 flutter:
   uses-material-design: true
   assets:
     - assets/animations/
+    - assets/animations/decorations/
+    - assets/animations/fish/
+    - assets/animations/background/

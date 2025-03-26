@@ -3,11 +3,11 @@ import '../model/decoration.dart' as model;
 
 class DecorationFactory {
   late final Map<String, model.Decoration> decorationMap;
-
+  static const basePath = 'assets/animations/decorations';
   DecorationFactory() {
     decorationMap = Map.from({
       'Seaweed': model.Decoration(
-        assetPath: 'assets/animations/seaweed.json',
+        assetPath: '$basePath/seaweed.json',
         color: Colors.green,
         type: 'Seaweed',
         passiveIncome: 1,
@@ -15,7 +15,7 @@ class DecorationFactory {
         size: 1.0,
       ),
       'Coral': model.Decoration(
-        assetPath: 'assets/animations/coral.json',
+        assetPath: '$basePath/coral.json',
         color: Colors.pink,
         type: 'Coral',
         passiveIncome: 2,
@@ -23,7 +23,7 @@ class DecorationFactory {
         size: 1.0,
       ),
       'Treasure Chest': model.Decoration(
-        assetPath: 'assets/animations/treasure.json',
+        assetPath: '$basePath/treasure chest.json',
         color: Colors.amber,
         type: 'Treasure Chest',
         passiveIncome: 5,
@@ -31,7 +31,7 @@ class DecorationFactory {
         size: 1.0,
       ),
       'Castle': model.Decoration(
-        assetPath: 'assets/animations/castle.json',
+        assetPath: '$basePath/castle.json',
         color: Colors.grey,
         type: 'Castle',
         passiveIncome: 10,

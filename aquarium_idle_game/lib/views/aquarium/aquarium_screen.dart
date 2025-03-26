@@ -22,7 +22,6 @@ class AquariumScreen extends StatelessWidget {
           child: Stack(
             children: [
               BackgroundWidget(
-                animationPath: 'assets/animations/background.json',
                 speed: 1,
               ),
               // Coin-Counter
