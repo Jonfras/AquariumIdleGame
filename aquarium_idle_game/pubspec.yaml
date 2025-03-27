@@ -17,6 +17,10 @@ dependencies:
   rxdart: ^0.28.0
   openapi_generator_annotations: ^4.13.1
   intl: ^0.18.1  
+  just_audio: ^0.9.46
+  path_provider: ^2.1.5
+  audio_service: ^0.18.17
+  audio_session: ^0.1.25
   
 dev_dependencies:
   openapi_generator: ^4.13.1
@@ -30,3 +34,4 @@ flutter:
     - assets/animations/decorations/
     - assets/animations/fish/
     - assets/animations/background/
+    - assets/audio/

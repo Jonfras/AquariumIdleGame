@@ -24,6 +24,8 @@ class AnimatedFish extends StatefulWidget {
 
 class _AnimatedFishState extends State<AnimatedFish>
     with TickerProviderStateMixin {
+  Timer? _animationTimer;
+
   late AnimationController _horizontalController;
   late AnimationController _verticalController;
   late Animation<double> _horizontalAnimation;
@@ -54,7 +56,8 @@ class _AnimatedFishState extends State<AnimatedFish>
 
       // Set initial position - start at the left edge
       _currentLeft = _random.nextDouble() * (screenWidth / 2);
-      _currentTop = 100 + _random.nextDouble() * (screenHeight - fishSize - 200);
+      _currentTop =
+          100 + _random.nextDouble() * (screenHeight - fishSize - 200);
       _swimmingRight = true;
 
       // Initialize controllers
@@ -77,28 +80,9 @@ class _AnimatedFishState extends State<AnimatedFish>
       _verticalController.repeat(reverse: true);
 
       // Listen for horizontal animation completion to change direction
-      _horizontalController.addStatusListener((status) {
-        if (status == AnimationStatus.completed && mounted) {
-          setState(() {
-            // Update current position
-            _currentLeft = _swimmingRight ? screenWidth - fishSize - 20 : 20;
-
-            // Change direction
-            _swimmingRight = !_swimmingRight;
-
-            // Create new horizontal animation
-            _createHorizontalAnimation(screenWidth, fishSize);
-
-            // Start new animation
-            _horizontalController.reset();
-            _horizontalController.forward();
-          });
-
-          debugPrint(
-            'Fish ${widget.fish.type} changing direction to: ${_swimmingRight ? "right" : "left"}',
-          );
-        }
-      });
+      _horizontalController.addStatusListener(
+        _horizontalAnimationStatusListener,
+      );
 
       // Start swimming
       _horizontalController.forward();
@@ -112,12 +96,9 @@ class _AnimatedFishState extends State<AnimatedFish>
   }
 
   void _createHorizontalAnimation(double screenWidth, double fishSize) {
-    final targetX =
-        _swimmingRight
-            ? screenWidth -
-                fishSize -
-                20 // Right edge with padding
-            : 20; // Left edge with padding
+    if (!mounted) return;
+
+    final targetX = _swimmingRight ? screenWidth - fishSize - 20 : 20;
 
     _horizontalAnimation = Tween<double>(
       begin: _currentLeft,
@@ -134,10 +115,37 @@ class _AnimatedFishState extends State<AnimatedFish>
     );
   }
 
+  void _horizontalAnimationStatusListener(AnimationStatus status) {
+    if (status == AnimationStatus.completed && mounted) {
+      // Check if mounted before setState
+      setState(() {
+        // Update current position
+        final screenWidth = MediaQuery.of(context).size.width;
+        final fishSize = widget.fish.size * 100;
+        _currentLeft = _swimmingRight ? screenWidth - fishSize - 20 : 20;
+        _swimmingRight = !_swimmingRight;
+        _createHorizontalAnimation(screenWidth, fishSize);
+      });
+
+      // Only restart animation if still mounted
+      if (mounted) {
+        _horizontalController.reset();
+        _horizontalController.forward();
+      }
+    }
+  }
+
   @override
   void dispose() {
+    _animationTimer?.cancel();
+
+    _horizontalController.removeStatusListener(
+      _horizontalAnimationStatusListener,
+    );
+
     _horizontalController.dispose();
     _verticalController.dispose();
+
     super.dispose();
   }
 
@@ -157,9 +165,11 @@ class _AnimatedFishState extends State<AnimatedFish>
               ValueDelegate.color(['**'], value: widget.fish.color),
             ],
           ),
-          errorBuilder: widget.errorBuilder ?? (context, error, stackTrace) {
-            return Icon(Icons.pets, color: widget.fish.color, size: 50);
-          },
+          errorBuilder:
+              widget.errorBuilder ??
+              (context, error, stackTrace) {
+                return Icon(Icons.pets, color: widget.fish.color, size: 50);
+              },
         ),
       );
     }

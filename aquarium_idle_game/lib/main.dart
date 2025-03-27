@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:aquarium_idle_game/views/aquarium/aquarium_screen_cubit.dart';
 import 'package:aquarium_idle_game/views/aquarium/aquarium_screen_state.dart';
+import 'package:aquarium_idle_game/views/aquarium/aquarium_screen_wrapper.dart';
 import 'package:aquarium_idle_game/views/login/cubit/auth_cubit.dart';
 import 'package:aquarium_idle_game/views/login/login_view.dart';
 import 'package:aquarium_idle_game/views/shop/shop_screen_cubit.dart';
@@ -35,7 +36,7 @@ class AquariumIdleGame extends StatelessWidget {
       ),
       GoRoute(
         path: '/',
-        builder: (context, state) => AppScaffold(child: AquariumScreen()),
+        builder: (context, state) => AppScaffold(child: AquariumScreenWrapper()),
       ),
       GoRoute(
         path: '/shop',
@@ -78,9 +79,7 @@ class AquariumIdleGame extends StatelessWidget {
             ShopScreenState(coinCount: 0, tabBarIndex: 0),
           ),
         ),
-        BlocProvider(
-          create: (context) => AquariumScreenCubit(AquariumScreenState()),
-        ),
+        // Remove AquariumScreenCubit from here
       ],
       child: Builder(
         builder: (context) {

@@ -14,7 +14,6 @@ class AquariumScreen extends StatelessWidget {
     final cubit = context.watch<AquariumScreenCubit>();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Aquarium Idle')),
       body: GestureDetector(
         onTap: () => cubit.incrementCoins(),
         child: Container(
@@ -32,7 +31,7 @@ class AquariumScreen extends StatelessWidget {
                   child: CoinCounter(),
                 ),
               ),
-              
+
               if (cubit.state.decorationList.isNotEmpty)
                 for (var decoration in cubit.state.decorationList) decoration,
 
@@ -42,7 +41,7 @@ class AquariumScreen extends StatelessWidget {
               // Inside Stack in AquariumScreen
               // Add after fish list
               // Decorations list - similar to fish list
-              
+
 
               // We'll use a Builder to access the Scaffold context for showing the SnackBar
               Builder(

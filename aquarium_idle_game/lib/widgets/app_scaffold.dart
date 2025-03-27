@@ -22,9 +22,9 @@ class AppScaffold extends StatelessWidget {
       body: child,
       bottomNavigationBar: BottomNavigationBar(
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.pets), label: 'Aquarium'),
+          BottomNavigationBarItem(icon: Icon(Icons.water), label: 'Aquarium'),
           BottomNavigationBarItem(icon: Icon(Icons.store), label: 'Shop'),
-          BottomNavigationBarItem(icon: Icon(Icons.upgrade), label: 'Upgrades'),
+          BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
         ],
         currentIndex: _getCurrentIndex(currentLocation),
         selectedItemColor: Colors.blue,

@@ -11,6 +11,8 @@ class AquariumScreenCubit extends Cubit<AquariumScreenState> {
   AquariumScreenCubit(super.initialState) {
     debugPrint('AquariumScreenCubit: Initializing');
     _setupListeners();
+    fishRepo.loadFishFromBackend();
+    decorationRepo.loadDecorationsFromBackend();
   }
 
   final coinRepo = CoinRepo();

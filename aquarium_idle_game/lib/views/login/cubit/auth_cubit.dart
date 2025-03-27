@@ -1,4 +1,5 @@
 ﻿import 'package:aquarium_idle_game/pref_constants.dart';
+import 'package:aquarium_idle_game/state_management/audio_service.dart';
 import 'package:aquarium_idle_game/views/login/cubit/auth_state.dart';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
@@ -26,6 +27,8 @@ class AuthCubit extends Cubit<AuthState> {
     final isLoggedIn = prefs.getBool(PrefConstants.isLoggedInKey) ?? false;
 
     if (isLoggedIn) {
+      AudioService().playBackgroundMusic();
+
       emit(AuthAuthenticated());
     } else {
       emit(AuthUnauthenticated());
@@ -36,6 +39,9 @@ class AuthCubit extends Cubit<AuthState> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(PrefConstants.isLoggedInKey, false);
     await prefs.remove(PrefConstants.usernameKey);
+    await prefs.remove(PrefConstants.userIdKey);
+
+    prefs.clear();
   }
 
   Future<void> login(String username, String password) async {
@@ -52,7 +58,9 @@ class AuthCubit extends Cubit<AuthState> {
       }
 
       if (response != null && response.data != null) {
+        debugPrint('Login successful: ${response.data!.id}');
         _saveUserData(username, response.data!.id!);
+        AudioService().playBackgroundMusic();
 
         emit(AuthAuthenticated());
       } else {
@@ -78,6 +86,7 @@ class AuthCubit extends Cubit<AuthState> {
 
       if (response != null && response.data != null) {
         _saveUserData(username, response.data!.id!);
+        AudioService().playBackgroundMusic();
 
         emit(AuthAuthenticated());
       } else {
@@ -89,11 +98,8 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   Future<void> logout() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(PrefConstants.isLoggedInKey, false);
-    await prefs.remove(PrefConstants.usernameKey);
-    await prefs.remove(PrefConstants.userIdKey);
-
+    clearAuthStatus();
+    AudioService().stopBackgroundMusic();
     emit(AuthUnauthenticated());
   }
 

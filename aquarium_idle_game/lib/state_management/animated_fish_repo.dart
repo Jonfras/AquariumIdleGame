@@ -14,7 +14,7 @@ class AnimatedFishRepo {
     _fishCountMap = {};
     _fishMergeCountMap = {};
     _setupSaveListener();
-    _loadFishFromBackend(); // Add this line to load fish at initialization
+    loadFishFromBackend(); // Add this line to load fish at initialization
   }
 
   static final AnimatedFishRepo _instance = AnimatedFishRepo._privateConstructor();
@@ -33,10 +33,12 @@ class AnimatedFishRepo {
   Map<String, int> _fishMergeCountMap = {};
 
   // Add this method to load fish from backend
-  Future<void> _loadFishFromBackend() async {
+  Future<void> loadFishFromBackend() async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final userId = prefs.getInt(PrefConstants.userIdKey);
+
+      debugPrint('Loading fish for user ID: $userId');
 
       if (userId == null) {
         debugPrint('Cannot load fish: userId is null');
