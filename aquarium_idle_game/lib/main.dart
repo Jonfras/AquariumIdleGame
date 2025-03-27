@@ -11,7 +11,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:aquarium_idle_game/views/aquarium/aquarium_screen.dart';
 import 'package:aquarium_idle_game/views/shop/shop_screen.dart';
-import 'package:aquarium_idle_game/views/upgrades/upgrades_screen.dart';
+import 'package:aquarium_idle_game/views/settings/settings_screen.dart';
 import 'package:aquarium_idle_game/widgets/app_scaffold.dart';
 
 void main() async {
@@ -42,8 +42,8 @@ class AquariumIdleGame extends StatelessWidget {
         builder: (context, state) => AppScaffold(child: ShopScreen()),
       ),
       GoRoute(
-        path: '/upgrades',
-        builder: (context, state) => AppScaffold(child: UpgradesScreen()),
+        path: '/settings',
+        builder: (context, state) => const SettingsScreen(),
       ),
     ],
     refreshListenable: GoRouterRefreshStream(authCubit.stream),

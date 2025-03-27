@@ -20,6 +20,7 @@ dependencies:
   
 dev_dependencies:
   openapi_generator: ^4.13.1
+  openapi_generator_cli: ^4.0.0
   build_runner: ^2.3.2
 
 flutter:

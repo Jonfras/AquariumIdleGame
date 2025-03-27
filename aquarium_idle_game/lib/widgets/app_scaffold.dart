@@ -10,7 +10,7 @@ class AppScaffold extends StatelessWidget {
   int _getCurrentIndex(String? location) {
     if (location == '/') return 0;
     if (location == '/shop') return 1;
-    if (location == '/upgrades') return 2;
+    if (location == '/settings') return 2;
     return 0; // Standard: Aquarium
   }
 
@@ -31,7 +31,7 @@ class AppScaffold extends StatelessWidget {
         onTap: (index) {
           if (index == 0) context.go('/');
           if (index == 1) context.go('/shop');
-          if (index == 2) context.go('/upgrades');
+          if (index == 2) context.go('/settings');
         },
       ),
     );

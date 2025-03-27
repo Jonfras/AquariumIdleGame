@@ -8,5 +8,6 @@
   inputSpecFile: 'openapi_spec.json', 
   generatorName: Generator.dart,
   outputDirectory: 'lib/api/generated',
+  alwaysRun: true,
 )
 class ApiConfig extends OpenapiGeneratorConfig {}

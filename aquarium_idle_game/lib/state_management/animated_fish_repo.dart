@@ -1,15 +1,20 @@
 ﻿import 'package:aquarium_idle_game/widgets/animated_fish.dart';
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../model/fish.dart';
 import '../util/fish_factory.dart';
+import '../pref_constants.dart';
+import '../api/generated/lib/api.dart';
 
 class AnimatedFishRepo {
   AnimatedFishRepo._privateConstructor() {
     fishSubject = BehaviorSubject<List<AnimatedFish>>.seeded([]);
     _fishCountMap = {};
     _fishMergeCountMap = {};
+    _setupSaveListener();
+    _loadFishFromBackend(); // Add this line to load fish at initialization
   }
 
   static final AnimatedFishRepo _instance = AnimatedFishRepo._privateConstructor();
@@ -20,12 +25,82 @@ class AnimatedFishRepo {
 
   final FishFactory factory = FishFactory();
   late final BehaviorSubject<List<AnimatedFish>> fishSubject;
+  final _fishSaveSubject = BehaviorSubject<List<Fish>>();
+  final _gameApi = GameApi(ApiClient(basePath: 'http://localhost:5000'));
 
-  // Map to track count of each fish type
   Map<String, List<Fish>> _fishCountMap = {};
 
-  // Map to track merge level of each fish type
   Map<String, int> _fishMergeCountMap = {};
+
+  // Add this method to load fish from backend
+  Future<void> _loadFishFromBackend() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final userId = prefs.getInt(PrefConstants.userIdKey);
+
+      if (userId == null) {
+        debugPrint('Cannot load fish: userId is null');
+        return;
+      }
+
+      final response = await _gameApi.gameFishUserIdGet(userId);
+
+      if (response != null && response.errorMessage == '' && response.data != null) {
+        final List<FishDto> fishDtos = response.data!;
+        debugPrint('Loaded ${fishDtos.length} fish from backend');
+
+        // Convert FishDto to Fish models
+        final List<Fish> loadedFish = fishDtos.map((dto) {
+          // Parse color from hex string
+          Color color;
+          try {
+            color = Color(int.parse(dto.color!, radix: 16));
+          } catch (e) {
+            color = Colors.blue; // Default color if parsing fails
+          }
+
+          return Fish(
+            assetPath: factory.getFish(dto.fishType ?? 'clownfish').assetPath,
+            color: color,
+            type: dto.fishType ?? 'clownfish',
+            clickBonus: dto.clickBonus?.toInt() ?? 1,
+            price: dto.price?.toInt() ?? 10,
+            size: dto.size ?? 1.0,
+          );
+        }).toList();
+
+        // Process loaded fish for merge count tracking
+        for (var fish in loadedFish) {
+          String type = fish.type;
+
+          // Initialize lists if needed
+          _fishCountMap[type] ??= [];
+          _fishMergeCountMap[type] ??= 0;
+
+          // Calculate merge level based on size (reverse of the merge calculation)
+          double sizeFactor = fish.size / factory.getFish(type).size;
+          int estimatedMergeLevel = ((sizeFactor - 1) / 0.1).round();
+
+          if (estimatedMergeLevel > (_fishMergeCountMap[type] ?? 0)) {
+            _fishMergeCountMap[type] = estimatedMergeLevel;
+          }
+
+          // Add to count map
+          _fishCountMap[type]!.add(fish);
+        }
+
+        // Add fish to display
+        final fishList = loadedFish.map((fish) => AnimatedFish(fish: fish)).toList();
+        fishSubject.add(fishList);
+
+        debugPrint('Fish loaded successfully. Types: ${_fishCountMap.keys.join(', ')}');
+      } else {
+        debugPrint('Failed to load fish or no fish data available');
+      }
+    } catch (e) {
+      debugPrint('Error loading fish from backend: $e');
+    }
+  }
 
   void addFish(String type) {
     debugPrint('AnimatedFishRepo: Adding fish of type: $type');
@@ -47,6 +122,9 @@ class AnimatedFishRepo {
       // Add regular fish
       _updateFishList(type, fish);
     }
+
+    // Trigger save process
+    _triggerFishSave();
   }
 
   void _mergeFish(String type) {
@@ -104,6 +182,9 @@ class AnimatedFishRepo {
     // Update fish list
     debugPrint('AnimatedFishRepo: Emitting updated fish list after merge, size: ${fishList.length}');
     fishSubject.add(fishList);
+
+    // Trigger save process
+    _triggerFishSave();
   }
 
   void _updateFishList(String type, Fish fish) {
@@ -111,5 +192,54 @@ class AnimatedFishRepo {
     fishList.add(AnimatedFish(fish: fish));
     debugPrint('AnimatedFishRepo: Emitting updated fish list, size: ${fishList.length}');
     fishSubject.add(fishList);
+  }
+
+  void _triggerFishSave() {
+    final allFish = _getAllFish();
+    _fishSaveSubject.add(allFish);
+  }
+
+  List<Fish> _getAllFish() {
+    final fishList = fishSubject.valueOrNull ?? [];
+    return fishList.map((animatedFish) => animatedFish.fish).toList();
+  }
+
+  void _setupSaveListener() {
+    _fishSaveSubject
+        .debounceTime(const Duration(seconds: 2))
+        .listen((fishList) async {
+      try {
+        await _saveFishToBackend(fishList);
+      } catch (e) {
+        debugPrint('Failed to save fish to backend: $e');
+      }
+    });
+  }
+
+  Future<void> _saveFishToBackend(List<Fish> fishList) async {
+    final prefs = await SharedPreferences.getInstance();
+
+    final userId = prefs.getInt(PrefConstants.userIdKey);
+    if (userId == null) {
+      debugPrint('Cannot save fish: userId is null');
+      return;
+    }
+
+    // Convert Fish model to FishDto for API
+    final fishDtos = fishList.map((fish) => FishDto(
+      userId: userId,
+      fishType: fish.type,
+      size: fish.size,
+      clickBonus: fish.clickBonus,
+      color: fish.color.value.toRadixString(16),
+      price: fish.price,
+    )).toList();
+
+    try {
+      await _gameApi.gameFishPost(fishDto: fishDtos);
+      debugPrint('Fish saved to backend: ${fishDtos.length} fish');
+    } catch (e) {
+      debugPrint('Failed to save fish to backend: $e');
+    }
   }
 }

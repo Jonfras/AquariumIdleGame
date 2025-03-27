@@ -1,0 +1,11 @@
+﻿targets:
+  $default:
+    builders:
+      openapi_generator_annotations:openapi_generator:
+        options:
+          input: openapi_spec.json
+          output_directory: lib/api/generated
+          generator_name: dart
+          additional_properties:
+            pubName: api_client
+            pubVersion: 1.0.0

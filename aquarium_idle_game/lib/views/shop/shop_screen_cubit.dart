@@ -5,6 +5,7 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
+import '../../api/generated/lib/api.dart';
 import '../../state_management/coin_repo.dart';
 
 import 'package:aquarium_idle_game/state_management/decoration_repo.dart';
@@ -16,6 +17,8 @@ class ShopScreenCubit extends Cubit<ShopScreenState> implements TickerProvider {
     _setupListeners();
     _initTabController();
   }
+  
+  final _gameApi = GameApi(ApiClient(basePath: 'http://localhost:5000'));
 
   final fishRepo = AnimatedFishRepo();
   final coinRepo = CoinRepo();

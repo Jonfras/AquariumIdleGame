@@ -1,0 +1,9 @@
+﻿{
+  "inputSpec": "openapi_spec.json",
+  "outputDir": "lib/api/generated",
+  "generatorName": "dart-dio",
+  "additionalProperties": {
+    "pubName": "api_client",
+    "pubVersion": "1.0.0"
+  }
+}
